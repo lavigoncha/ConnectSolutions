@@ -1,22 +1,62 @@
+import executeQuery from "../services/mysql.service";
 
 const obtenerPacientes = (req, res) => {
-    res.send('obtenerPacientes');
+    executeQuery('SELECT * FROM paciente').then(response => {
+        const data ={
+            message: `${response.length} datos encontrados`,
+            data: response.length > 0 ? response : null
+        }
+        res.json(data);
+    }).catch(error => {
+        console.log(error);
+        res.status(500).send(error);
+    });
 }
 
-const obtenerPaciente = (req, res) => {
-    res.send('obtenerPaciente');
+const obtenerPaciente = async (req, res) => {
+    const {id} = req.params;
+    try{
+        const response = await executeQuery(`SELECT * FROM paciente WHERE idPac = ${id}`);
+        res.send(response);
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }    
 }
 
-const agregarPaciente = (req, res) => {
-    res.send('agregarPaciente');
+const agregarPaciente = async(req, res) => {
+    const {nomPac, Edad, EmailPac} = req.body;
+    try{
+        const response = await executeQuery(`INSERT INTO paciente (nomPac, Edad, EmailPac) VALUES ('${nomPac}','${Edad}', '${EmailPac}')`);
+        console.log(response);
+        res.status(201).json({message: 'created', id: response.insertId});
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }    
 }
 
-const actualizarPaciente = (req, res) => {
-    res.send('actualizarPaciente');
+const actualizarPaciente = async (req, res) => {
+    const {nomPac, Edad, EmailPac} = req.body;
+    const {id} = req.params;
+    try{
+        const response = await executeQuery( `UPDATE paciente SET nomPac = '${nomPac}', Edad = '${Edad}', EmailPac = '${EmailPac}' WHERE idPac='${id}'` );
+        console.log(response);
+        res.json({message: response.affectedRows > 0 ? 'updated' : `No existe registro con id: ${id}`});
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }    
 }
 
 const eliminarPaciente = (req, res) => {
-    res.send('eliminarPaciente');
+    const {id} = req.params;
+    executeQuery(`DELETE FROM paciente WHERE idPac = '${id}' `).then(response => {
+        res.json({message: response.affectedRows > 0 ? 'deleted' : `No existe registro con id: ${id}`});
+    }).catch(error => {
+        console.log(error);
+        res.status(500).send(error);
+    });
 }
 
 export {obtenerPacientes, obtenerPaciente, agregarPaciente, actualizarPaciente, eliminarPaciente}
