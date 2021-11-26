@@ -3,7 +3,6 @@ import pacienteRoutes from './routes/paciente';
 import config from './config/config';
 import terapeutaRoutes from './routes/terapeuta';
 import errorHandler from './middlewares/errors';
-import validarRol from './middlewares/validarRol';
 
 const app= express();
 

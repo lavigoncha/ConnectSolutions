@@ -7,8 +7,6 @@ const pacienteRoutes = (app) => {
     const router = Router();
     app.use('/', router);
 
-    router.use(validarRol);
-
     router.get('/obtenerPacientes', obtenerPacientes);
     router.get('/obtenerPaciente/:id', obtenerPaciente);
     router.post('/agregarPaciente', agregarPaciente);
